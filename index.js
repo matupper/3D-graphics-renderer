@@ -38,15 +38,15 @@ function project({x, y, z}) {
 
 
 const vs = [
-    {x: 0.5, y: 0.5, z: 0.5},
-    {x: -0.5, y: -0.5, z: 0.5},
-    {x: 0.5, y: -0.5, z: 0.5},
-    {x: -0.5, y: 0.5, z: 0.5},
+    {x: 0.25, y: 0.25, z: 0.25},
+    {x: -0.25, y: -0.25, z: 0.25},
+    {x: 0.25, y: -0.25, z: 0.25},
+    {x: -0.25, y: 0.25, z: 0.25},
 
-    {x: 0.5, y: 0.5, z: -0.5},
-    {x: -0.5, y: -0.5, z: -0.5},
-    {x: 0.5, y: -0.5, z: -0.5},
-    {x: -0.5, y: 0.5, z: -0.5},
+    {x: 0.25, y: 0.25, z: -0.25},
+    {x: -0.25, y: -0.25, z: -0.25},
+    {x: 0.25, y: -0.25, z: -0.25},
+    {x: -0.25, y: 0.25, z: -0.25},
 ];
 
 const FPS = 60;
@@ -60,8 +60,8 @@ function translate_z({x, y, z}, dz) {
 }
 
 function rotate_xz({x, y, z}, angle) {
-    const c = math.cos(angle);
-    const s = math.sin(angle);
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
     return {
         x: x*c - z*s,
         y: y,
@@ -76,14 +76,14 @@ function frame() {
     const dt = 1/FPS;
     
     dz += 1*dt;
-    angle += 2*Math.PI*dt;
+    angle += Math.PI*dt;
 
     clear();
 
     for (const v of vs) {
-        point(screen(project(translate_z(v, dz))));
+        point(screen(project(translate_z(rotate_xz(v, angle), 1))));
     }
     setTimeout(frame, 1000/FPS);
 }
 
-frame();
+setTimeout(frame, 1000/FPS);
