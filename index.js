@@ -1,5 +1,6 @@
 const BACKGROUND = "#000000";
 const FOREGROUND = "#50FF50";
+const CAMVIEW = "#FFFFFF";
 
 const game = document.getElementById("game");
 game.width = 800;
@@ -71,6 +72,8 @@ let camera = {
     x: 0,
     y: 0,
     z: 0,
+    rx: 0,
+    ry: 0,
 }
 
 function camera_translate({x, y, z}) {
@@ -79,6 +82,41 @@ function camera_translate({x, y, z}) {
         y: y - camera.y,
         z: z - camera.z,
     }
+}
+
+function camera_rotate_x({x, y, z}, rx) {
+    const c = Math.cos(rx);
+    const s = Math.sin(rx);
+    return {
+        x: x,
+        y: y*c - z*s,
+        z: y*s + z*c,
+    }
+}
+
+function camera_rotate_y({x, y, z}, ry) {
+    const c = Math.cos(ry);
+    const s = Math.sin(ry);
+    return {
+        x: x*c + z*s,
+        y: y,
+        z: -x*s + z*c,
+    }
+}
+
+function camera_rotate({x, y, z}, rx, ry) {
+    return camera_rotate_x(camera_rotate_y({x, y, z}, ry), rx);
+
+}
+
+// function to render in the camera's perspective
+function camview({x, y, z}) {
+    return screen(project(camera_rotate(camera_translate({x, y, z}), camera.rx, camera.ry)));
+}
+
+// function to render in world coordinates
+function worldview({x, y, z}) {
+    return screen(project({x, y, z}));
 }
 
 // vertices of the cube
@@ -145,6 +183,10 @@ function frame() {
     if (keys["d"]) camera.x += speed*dt;
     if (keys["q"]) camera.z += speed*dt;
     if (keys["e"]) camera.z -= speed*dt;
+    if (keys["j"]) camera.ry += 2*speed*dt;
+    if (keys["l"]) camera.ry -= 2*speed*dt;
+    if (keys["i"]) camera.rx += 2*speed*dt;
+    if (keys["k"]) camera.rx -= 2*speed*dt;
 
     for (const v of vs) {
         //point(screen(project(translate_z(rotate_xz(v, angle), 1))));
@@ -155,8 +197,8 @@ function frame() {
             const b = vs[f[(i + 1) % f.length]];
 
             line(
-            screen(project(camera_translate(translate_z(rotate_xz(a, angle), 1)))),
-            screen(project(camera_translate(translate_z(rotate_xz(b, angle), 1))))
+            camview(translate_z(a, 1)),
+            camview(translate_z(b, 1))
             );
         }
     }
