@@ -177,16 +177,16 @@ function frame() {
     clear();
 
     //Keyboard inputs
-    if (keys["w"]) camera.y += speed*dt;
+    if (keys["shift"]) camera.y += speed*dt;
     if (keys["a"]) camera.x -= speed*dt;
-    if (keys["s"]) camera.y -= speed*dt;
+    if (keys["control"]) camera.y -= speed*dt;
     if (keys["d"]) camera.x += speed*dt;
-    if (keys["q"]) camera.z += speed*dt;
-    if (keys["e"]) camera.z -= speed*dt;
-    if (keys["j"]) camera.ry += 2*speed*dt;
-    if (keys["l"]) camera.ry -= 2*speed*dt;
-    if (keys["i"]) camera.rx += 2*speed*dt;
-    if (keys["k"]) camera.rx -= 2*speed*dt;
+    if (keys["w"]) camera.z += speed*dt;
+    if (keys["s"]) camera.z -= speed*dt;
+    if (keys["arrowleft"]) camera.ry += 2*speed*dt;
+    if (keys["arrowright"]) camera.ry -= 2*speed*dt;
+    if (keys["arrowup"]) camera.rx += 2*speed*dt;
+    if (keys["arrowdown"]) camera.rx -= 2*speed*dt;
 
     for (const v of vs) {
         //point(screen(project(translate_z(rotate_xz(v, angle), 1))));
