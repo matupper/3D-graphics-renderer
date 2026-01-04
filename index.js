@@ -45,12 +45,35 @@ function clear(){
     ctx.fillRect(0, 0, game.width, game.height);
 }
 
+
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
+
+function clipLineToNearPlane(a, b, near = 0.1) {
+    const aIn = a.z >= near;
+    const bIn = b.z >= near;
+
+    if (!aIn && !bIn) return null;     // fully behind
+    if (aIn && bIn) return { a, b };   // fully in front
+
+    const t = (near - a.z) / (b.z - a.z);
+
+    const hit = {
+        x: lerp(a.x, b.x, t),
+        y: lerp(a.y, b.y, t),
+        z: near,
+    };
+
+    return aIn ? { a, b: hit } : { a: hit, b };
+}
+
+
+
 // functions to draw objects
 
-function point ({x, y}){
-    ctx.fillStyle = FOREGROUND;
-    const s = 10;
-
+function point ({x, y}, s = 10, color = FOREGROUND){
+    ctx.fillStyle = color;
     ctx.fillRect(x - s/2, y - s/2, s, s);
 }
 
@@ -61,6 +84,24 @@ function line(p1, p2, color){
     ctx.strokeStyle = color || FOREGROUND;
     ctx.stroke();
 }
+
+function line3D(aWorld, bWorld, color, near = 0.1) {
+    // 1) world -> camera space
+    const aCam = worldToCamera(aWorld);
+    const bCam = worldToCamera(bWorld);
+
+    // 2) clip in camera space
+    const clipped = clipLineToNearPlane(aCam, bCam, near);
+    if (!clipped) return;
+
+    // 3) project + screen map
+    const p1 = screen(project(clipped.a));
+    const p2 = screen(project(clipped.b));
+
+    // 4) draw 2D line
+    line(p1, p2, color);
+}
+
 
 // function to normalize coordinate plane (0, 0) in the center of the screen
 function screen(p) {
@@ -74,13 +115,9 @@ function screen(p) {
 
 // function to project 3D coordinates to 2D coordinates
 function project({x, y, z}) {
-    if (z > 0) return {
+    return {
         x: x/z,
         y: y/z,
-    }
-    return {
-        x: Infinity,
-        y: Infinity,
     }
 }
 
@@ -141,25 +178,29 @@ function camera_rotate({x, y, z}, rx, ry) {
 
 }
 
+
+function worldToCamera({x, y, z}) {
+    const t = camera_translate({x, y, z});
+
+    return camera_rotate(t, -camera.rx, -camera.ry);
+}
+
 // function to render in the camera's perspective
 function camview({x, y, z}) {
-    const t = camera_translate({x, y, z});
-    const r = camera_rotate(t, -camera.rx, -camera.ry);
-
-    return screen(project(r));
+    return screen(project(worldToCamera({x, y, z})));
 }
 
 function draw_axis(unit = 1){
-    return line(camview({x: -unit, y: 0, z: 0}), camview({x: unit, y: 0, z: 0}), "red"), 
-           line(camview({x: 0, y: -unit, z: 0}), camview({x: 0, y: unit, z: 0}), "green"), 
-           line(camview({x: 0, y: 0, z: -unit}), camview({x: 0, y: 0, z: unit}), "blue");
+    return line3D({x: -unit, y: 0, z: 0}, {x: unit, y: 0, z: 0}, "red"), 
+           line3D({x: 0, y: -unit, z: 0}, {x: 0, y: unit, z: 0}, "green"), 
+           line3D({x: 0, y: 0, z: -unit}, {x: 0, y: 0, z: unit}, "blue");
 }
 
 
 function draw_grid(){
     for (let i = -10; i < 10; i++) {
-        line(camview({x: i, y: 0, z: -10}), camview({x: i, y: 0, z: 10}), "gray");
-        line(camview({x: -10, y: 0, z: i}), camview({x: 10, y: 0, z: i}), "gray");
+        line3D({x: i, y: 0, z: -10}, {x: i, y: 0, z: 10}, "gray");
+        line3D({x: -10, y: 0, z: i}, {x: 10, y: 0, z: i}, "gray");
     }
 }
 
@@ -190,7 +231,7 @@ function draw_cube(p, s, color = FOREGROUND){
         for (let i = 0; i < f.length; i++) {
             const a = vs[f[i]];
             const b = vs[f[(i + 1) % f.length]];
-            line(camview(a), camview(b), color || FOREGROUND);
+            line3D(a, b, color || FOREGROUND);
         }
     }
 }
@@ -203,7 +244,7 @@ function draw_circle({h, k}, r, n, color = FOREGROUND){
         vs.push({x, y, z: 0});
     }
     for (let i = 0; i < vs.length; i++) {
-        line(camview(vs[i]), camview(vs[(i + 1) % vs.length]), color || FOREGROUND);
+        line3D(vs[i], vs[(i + 1) % vs.length], color || FOREGROUND);
     }
 }
 
@@ -218,10 +259,10 @@ function draw_sphere({h, k, l}, r, n, color = FOREGROUND){
         }
     }
     for (let i = 0; i < vs.length; i++) {
-        line(camview(vs[i]), camview(vs[(i + 1) % vs.length]), color || FOREGROUND );
+        line3D(vs[i], vs[(i + 1) % vs.length], color || FOREGROUND );
     }
     for (let i = 0; i < vs.length; i++) {
-        line(camview(vs[i]), camview(vs[(i + n) % vs.length]), color || FOREGROUND);
+        line3D(vs[i], vs[(i + n) % vs.length], color || FOREGROUND);
     }
 
 }
