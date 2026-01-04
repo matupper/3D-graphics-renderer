@@ -18,6 +18,28 @@ window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
 
+let mouseLook = false;
+const MOUSE_SENS = 0.002;
+
+game.addEventListener("click", () => {
+    game.requestPointerLock();
+});
+
+document.addEventListener("pointerlockchange", () => {
+    mouseLook = document.pointerLockElement === game;
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (mouseLook) {
+        camera.rx += e.movementY * MOUSE_SENS;
+        camera.ry += e.movementX * MOUSE_SENS;
+    }
+
+    // clamp the pitch to the max and min pitch
+    camera.rx = Math.max(Math.min(camera.rx, MAX_PITCH), MIN_PITCH);
+});
+
+
 function clear(){
     ctx.fillStyle = BACKGROUND;
     ctx.fillRect(0, 0, game.width, game.height);
@@ -63,6 +85,9 @@ function project({x, y, z}) {
 }
 
 // camera functions
+const MAX_PITCH = Math.PI / 2 - 0.05;
+const MIN_PITCH = -MAX_PITCH;
+
 let camera = {
     x: 0,
     y: 0,
@@ -217,6 +242,7 @@ function rotate_xz({x, y, z}, angle) {
 
 let angle = 0;
 let speed = 0.5;
+let camspeed = 2;
 
 function frame() {
     const dt = 1/FPS;
@@ -238,10 +264,13 @@ function frame() {
     
     moveCameraLocal(dx, dy, dz);
 
-    if (keys["arrowleft"]) camera.ry -= speed*dt;
-    if (keys["arrowright"]) camera.ry += speed*dt;
-    if (keys["arrowup"]) camera.rx -= speed*dt;
-    if (keys["arrowdown"]) camera.rx += speed*dt;
+    if (keys["arrowleft"]) camera.ry -= camspeed*dt;
+    if (keys["arrowright"]) camera.ry += camspeed*dt;
+    if (keys["arrowup"]) camera.rx -= camspeed*dt;
+    if (keys["arrowdown"]) camera.rx += camspeed*dt;
+
+    // clamp the pitch to the max and min pitch
+    camera.rx = Math.max(Math.min(camera.rx, MAX_PITCH), MIN_PITCH);
 
     draw_cube({x: 0, y: 0, z: 1}, 0.5);
     draw_cube({x: 0, y: 0, z: -1}, 0.5);
