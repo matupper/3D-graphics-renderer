@@ -85,7 +85,7 @@ function project({x, y, z}) {
 }
 
 // camera functions
-const MAX_PITCH = Math.PI / 2 - 0.05;
+const MAX_PITCH = Math.PI / 2;
 const MIN_PITCH = -MAX_PITCH;
 
 let camera = {
@@ -248,8 +248,8 @@ function frame() {
     const dt = 1/FPS;
     
     clear();
-    //draw_axis();
-    //draw_grid();
+    draw_axis();
+    draw_grid();
 
     //Keyboard inputs
     let dx = 0, dy = 0, dz = 0;
