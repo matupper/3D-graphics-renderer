@@ -1,6 +1,7 @@
 import { BACKGROUND, FPS } from './constants.js';
 import { setupMouseInput, processKeyboardInput } from './input.js';
 import { clear, draw_axis, draw_grid, draw_cube, initRenderer } from './renderer.js';
+import { drawUI, initUI } from './ui.js';
 
 // Canvas setup
 const game = document.getElementById("game");
@@ -10,7 +11,7 @@ const ctx = game.getContext("2d");
 
 // Initialize renderer with canvas context and dimensions
 initRenderer(ctx, game.width, game.height);
-
+initUI(ctx, game.width, game.height);
 // Setup mouse input
 setupMouseInput(game);
 
@@ -34,6 +35,8 @@ function frame() {
     draw_cube({x: -1, y: 0, z: 0}, 0.5);
 
     // draw_sphere({h: 0, k: 0, l: 0}, 1, 20);
+
+    drawUI();
 
     setTimeout(frame, 1000/FPS);
 }

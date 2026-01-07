@@ -13,6 +13,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 let mouseLook = false;
+let movementEnabled = true; // Toggle for movement controls
 
 export function getMouseLook() {
     return mouseLook;
@@ -38,17 +39,29 @@ export function setupMouseInput(game) {
     });
 }
 
+// Track if 't' key was pressed last frame to detect key press (not just held)
+let movementToggle = false;
+
 export function processKeyboardInput(dt, speed, camspeed) {
+    // Toggle movement on 't' key press (not while held)
+    if (keys["t"] && !movementToggle) {
+        movementEnabled = !movementEnabled;
+    }
+    movementToggle = keys["t"];
+
     // Movement input
     let dx = 0, dy = 0, dz = 0;
+
+    if (movementEnabled) {
+        
+        if (keys[" "]) dy += speed * dt;      // up
+        if (keys["shift"]) dy -= speed * dt;  // down
+    }
 
     if (keys["a"]) dx -= speed * dt;      // strafe left
     if (keys["d"]) dx += speed * dt;      // strafe right
     if (keys["w"]) dz += speed * dt;      // forward
     if (keys["s"]) dz -= speed * dt;      // backward
-    
-    if (keys[" "]) dy += speed * dt;      // up
-    if (keys["shift"]) dy -= speed * dt;  // down
     
     moveCameraLocal(dx, dy, dz);
 

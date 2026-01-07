@@ -25,6 +25,7 @@ export function line(p1, p2, color) {
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
     ctx.strokeStyle = color || FOREGROUND;
+    ctx.lineWidth = 1; // Explicitly set lineWidth to prevent UI from affecting 3D rendering
     ctx.stroke();
 }
 
