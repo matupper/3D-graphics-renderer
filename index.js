@@ -16,7 +16,7 @@ initUI(ctx, game.width, game.height);
 setupMouseInput(game);
 
 // Game state
-let speed = 0.5;
+let speed = 7;
 let camspeed = 2;
 
 function frame() {
@@ -29,10 +29,12 @@ function frame() {
     // Process all keyboard inputs
     processKeyboardInput(dt, speed, camspeed);
 
-    draw_cube({x: 0, y: 0, z: 1}, 0.5);
-    draw_cube({x: 0, y: 0, z: -1}, 0.5);
-    draw_cube({x: 1, y: 0, z: 0}, 0.5);
-    draw_cube({x: -1, y: 0, z: 0}, 0.5);
+    draw_cube({x: 0, y: 0, z: 1}, 1);
+    draw_cube({x: 0, y: 0, z: -1}, 1);
+    draw_cube({x: 0, y: 1, z: 0}, 1);
+    draw_cube({x: 0, y: -1, z: 0}, 1);
+    draw_cube({x: 1, y: 0, z: 0}, 1);
+    draw_cube({x: -1, y: 0, z: 0}, 1);
 
     // draw_sphere({h: 0, k: 0, l: 0}, 1, 20);
 
