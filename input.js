@@ -55,13 +55,17 @@ export function processKeyboardInput(dt, speed, camspeed) {
     if (movementEnabled) {
         
         if (keys[" "]) dy += speed * dt;      // up
-        if (keys["shift"]) dy -= speed * dt;  // down
+        if (keys["c"]) dy -= speed * dt;  // down
     }
 
+
+    if (keys["shift"]) speed *= 3, camspeed *= 2;
     if (keys["a"]) dx -= speed * dt;      // strafe left
     if (keys["d"]) dx += speed * dt;      // strafe right
     if (keys["w"]) dz += speed * dt;      // forward
     if (keys["s"]) dz -= speed * dt;      // backward
+
+    
     
     moveCameraLocal(dx, dy, dz);
 
