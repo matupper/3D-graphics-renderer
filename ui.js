@@ -69,7 +69,7 @@ export function drawCrosshair() {
 // Main UI drawing function - called each frame
 export function drawUI() {
     // Example: Draw FPS counter in top-left
-    text(`FPS: ${FPS}`, 10, 10, FOREGROUND, 14);
+    text(`By Matias Tupper`, 10, 10, FOREGROUND, 14);
     
     drawCrosshair();
 }
