@@ -1,6 +1,6 @@
 # HTML Graphics
 
-A 3D graphics engine built with vanilla JavaScript and HTML5 Canvas. Features a custom 3D rendering pipeline, physics-based movement, and interactive camera controls.
+A 3D graphics engine built with vanilla JavaScript and HTML5 Canvas. Features a custom 3D rendering pipeline, physics-based movement, and interactive camera controls. [Try it out on my site!](https://www.matiastupper.com/projects/js-3d-renderer/)
 
 ## Features
 
